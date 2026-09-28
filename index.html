@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="PNP Electronic Document Filing System prototype">
+  <title>PNP EFDS | Sign in</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <section class="auth-screen" id="authScreen">
+    <div class="auth-brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Philippine_National_Police_seal.svg" alt="Philippine National Police seal">
+      <p>PNP Electronic<br>Document Filing System</p>
+    </div>
+    <main class="auth-panel">
+      <p class="eyebrow">PNP Portal</p>
+      <h1 id="authTitle">Welcome back</h1>
+      <p class="intro" id="authIntro">Enter your credentials to access your account.</p>
+      <p class="notice" id="authNotice" role="status" hidden></p>
+      <form id="loginForm" class="auth-form">
+        <label>Email address<input name="email" type="email" autocomplete="username" placeholder="you@example.com" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required></label>
+        <button class="primary-button" type="submit">Sign in</button>
+      </form>
+      <form id="registerForm" class="auth-form" hidden>
+        <label>Full name<input name="name" autocomplete="name" required></label>
+        <label>Email address<input name="email" type="email" autocomplete="email" required></label>
+        <label>Password<input name="password" type="password" minlength="8" autocomplete="new-password" required></label>
+        <button class="primary-button" type="submit">Create account</button>
+      </form>
+      <p class="auth-switch" id="authSwitch">Don't have an account? <button type="button" class="text-button" data-auth-mode="register">Create account</button></p>
+      <p class="demo-hint" id="demoHint">Prototype demo: demo@pnp.gov.ph / password123</p>
+    </main>
+  </section>
+
+  <div class="app-screen" id="appScreen" hidden>
+    <header class="topbar">
+      <a class="brand" href="#for_action" data-view="for_action" aria-label="PNP EFDS home">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/98/Philippine_National_Police_seal.svg" alt="">
+        <span>PNP EFDS</span>
+      </a>
+      <nav class="navigation" aria-label="Document status">
+        <button class="nav-button" type="button" data-view="for_action">For Action <span aria-hidden="true">&#9888;</span></button>
+        <details class="nav-menu" data-menu-view="draft">
+          <summary class="nav-button">Draft <span aria-hidden="true">&#9998;</span></summary>
+          <div class="nav-options" aria-label="Draft document types">
+            <button class="nav-option" type="button" data-draft-type="Correspondence">Correspondence</button>
+            <button class="nav-option" type="button" data-draft-type="PNP Radio Message">PNP Radio Message</button>
+            <button class="nav-option" type="button" data-draft-type="Investigation Report">Investigation Report</button>
+          </div>
+        </details>
+        <details class="nav-menu" data-menu-view="within_office">
+          <summary class="nav-button">Within Office <span aria-hidden="true">&#8646;</span></summary>
+          <div class="nav-options" aria-label="Within Office document types">
+            <button class="nav-option" type="button" data-within-type="received_documents">Received Documents</button>
+          </div>
+        </details>
+        <button class="nav-button" type="button" data-view="outside_office">Outside Office <span aria-hidden="true">&#10132;</span></button>
+        <button class="nav-button" type="button" data-view="archived">Archived <span aria-hidden="true">&#128451;</span></button>
+      </nav>
+      <div class="user-area">
+        <div class="user-details"><span id="userName"></span><button class="logout text-button" id="logoutButton" type="button">Log out</button></div>
+        <div class="avatar" id="userAvatar" aria-hidden="true">JD</div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="content-panel">
+        <div class="heading-row">
+          <div><p class="eyebrow">Document management</p><h1 id="viewTitle">For Action</h1><p class="view-description" id="viewDescription"></p></div>
+          <time class="date" id="todayDate"></time>
+        </div>
+        <div class="panel-heading">
+          <h2 id="panelTitle">For Action</h2>
+          <button class="primary-button compact" id="newDraftButton" type="button" hidden>New draft</button>
+        </div>
+        <p class="status-message" id="statusMessage" role="status" hidden></p>
+
+        <form class="draft-form" id="draftForm" hidden>
+          <h3>Create document</h3>
+          <div class="field"><label for="draftSubject">Subject</label><input id="draftSubject" name="subject" required></div>
+          <div class="field"><label for="draftFileName">File name</label><input id="draftFileName" name="file_name" required></div>
+          <div class="field"><label for="draftFrom">From</label><input id="draftFrom" name="from_unit" required></div>
+          <div class="field"><label for="draftTo">To</label><input id="draftTo" name="to_unit" required></div>
+          <div class="field"><label for="draftType">Type</label><select id="draftType" name="document_type"><option>Correspondence</option><option>PNP Radio Message</option><option>Investigation Report</option></select></div>
+          <div class="field"><label for="draftStlType">STL Type</label><input id="draftStlType" name="stl_type" required></div>
+          <div class="field"><label for="draftPriority">Priority</label><select id="draftPriority" name="priority"><option>No</option><option>Yes</option></select></div>
+          <section class="editor-section" aria-label="Document editor">
+            <div class="editor-heading"><h3>Document editor</h3><button class="secondary-button" id="downloadDraftButton" type="button">Download .docx</button></div>
+            <div class="editor-toolbar" role="toolbar" aria-label="Document formatting">
+              <button class="editor-tool" type="button" data-command="bold" aria-label="Bold" title="Bold"><strong>B</strong></button>
+              <button class="editor-tool" type="button" data-command="italic" aria-label="Italic" title="Italic"><em>I</em></button>
+              <button class="editor-tool" type="button" data-command="underline" aria-label="Underline" title="Underline"><u>U</u></button>
+              <button class="editor-tool" type="button" data-command="strikeThrough" aria-label="Strikethrough" title="Strikethrough"><s>S</s></button>
+              <span class="editor-divider" aria-hidden="true"></span>
+              <button class="editor-tool" type="button" data-command="justifyLeft" aria-label="Align left" title="Align left">&#8676;</button>
+              <button class="editor-tool" type="button" data-command="justifyCenter" aria-label="Align center" title="Align center">&#8596;</button>
+              <button class="editor-tool" type="button" data-command="justifyRight" aria-label="Align right" title="Align right">&#8677;</button>
+              <span class="editor-divider" aria-hidden="true"></span>
+              <button class="editor-tool" type="button" data-command="insertUnorderedList" aria-label="Bulleted list" title="Bulleted list">&#8226; List</button>
+              <button class="editor-tool" type="button" data-command="insertOrderedList" aria-label="Numbered list" title="Numbered list">1. List</button>
+              <button class="editor-tool" type="button" data-command="undo" aria-label="Undo" title="Undo">&#8630;</button>
+              <button class="editor-tool" type="button" data-command="redo" aria-label="Redo" title="Redo">&#8631;</button>
+            </div>
+            <div class="editor-workspace"><div id="documentEditor" class="document-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Document content" data-placeholder="Start writing your document..."></div></div>
+          </section>
+          <div class="draft-form-actions">
+            <button class="secondary-button" type="submit" name="destination" value="draft">Save Draft</button>
+            <button class="success-button" type="submit" name="destination" value="for_action">Send to For Action</button>
+            <button class="text-button" id="cancelDraftButton" type="button">Cancel</button>
+          </div>
+        </form>
+
+        <form class="filters" id="filterForm">
+          <div class="field"><label for="filterSubject">Subject</label><input id="filterSubject" name="subject" placeholder="Enter subject"></div>
+          <div class="field"><label for="filterFileName">File name</label><input id="filterFileName" name="file_name" placeholder="Enter file name"></div>
+          <div class="field"><label for="filterCreatedDate">Created date</label><input id="filterCreatedDate" name="created_date" type="date"></div>
+          <div class="field"><label for="filterType">Type</label><select id="filterType" name="type"><option value="">All types</option><option>Correspondence</option><option>PNP Radio Message</option><option>Investigation Report</option></select></div>
+          <div class="field received-filter" id="receivedFilter" hidden><label for="filterReceivedDate">Date received</label><input id="filterReceivedDate" name="received_date" type="date"></div>
+        </form>
+
+        <article class="document-preview" id="documentPreview" hidden></article>
+
+        <div class="entries-toolbar">
+          <label class="entries-limit">Show <select id="entriesLimit"><option>10</option><option>25</option><option>50</option><option>100</option></select> entries</label>
+          <div class="entries-actions-group">
+            <div class="entries-actions" id="entriesActions"></div>
+            <div class="filter-actions"><button class="danger-button compact" id="clearFilterButton" type="button"><span class="button-icon" aria-hidden="true">&#10005;</span>Clear Filter</button><button class="primary-button compact" type="submit" form="filterForm"><span class="search-icon" aria-hidden="true"></span>Search</button></div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="documents-table">
+            <thead><tr><th><input id="selectAll" type="checkbox" aria-label="Select all documents"></th><th>Subject</th><th>Filename</th><th>From</th><th>To</th><th>Type</th><th>STL Type</th><th>Priority</th><th>Date In</th><th>Action Requested</th><th>Tools</th></tr></thead>
+            <tbody id="documentsBody"></tbody>
+          </table>
+          <p class="empty" id="emptyState" hidden>No documents to display.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="route-dialog" id="routeDialog" aria-labelledby="routeDialogTitle">
+    <form id="routeForm">
+      <div class="route-dialog-heading"><div><h2 id="routeDialogTitle">Route document</h2><p id="routeDialogDescription">Choose where this document should go.</p></div><button class="icon-button" type="button" data-close-dialog aria-label="Close">&times;</button></div>
+      <div class="field"><label for="routeTarget">Office</label><select id="routeTarget" required><option value="within_office">Within Office</option><option value="outside_office">Outside Office</option></select></div>
+      <div class="route-destinations" id="routeDestinations"></div>
+      <div class="field" id="routeDetails"><label for="routeRemarks">Remarks</label><textarea id="routeRemarks" maxlength="5000"></textarea><label for="actionRequired">Action required</label><select id="actionRequired"><option value="">Select action required</option><option>for Approval</option><option>for Comment</option><option>for Recommendation</option><option>for Information</option><option>for Notation</option><option>for Signature</option><option>for Study/Investigation</option><option>for File/Reference</option><option>See Me/Call Me</option></select></div>
+      <div class="route-dialog-actions"><button class="text-button" type="button" data-close-dialog>Cancel</button><button class="primary-button compact" type="submit">Confirm Route</button></div>
+    </form>
+  </dialog>
+  <div class="prototype-label">Static prototype · data stays in this browser</div>
+</body>
+</html>
